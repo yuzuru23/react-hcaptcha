@@ -1,22 +1,5 @@
 const React = require('react');
 
-// Borrowed from https://github.com/ai/nanoid/blob/3.0.2/non-secure/index.js
-// This alphabet uses `A-Za-z0-9_-` symbols. A genetic algorithm helped
-// optimize the gzip compression for this alphabet.
-const urlAlphabet =
-  'ModuleSymbhasOwnPr-0123456789ABCDEFGHNRVfgctiUvz_KqYTJkLxpZXIjQW'
-
-const nanoid = (size = 21) => {
-  let id = ''
-  // A compact alternative for `for (var i = 0; i < step; i++)`.
-  let i = size
-  while (i--) {
-    // `| 0` is more compact and faster than `Math.floor()`.
-    id += urlAlphabet[(Math.random() * 64) | 0]
-  }
-  return id
-}
-
  // Create script to init hCaptcha
 let onLoadListeners = [];
 let captchaScriptCreated = false;
@@ -67,20 +50,22 @@ class HCaptcha extends React.Component {
       if (!isApiReady)
         captchaScriptCreated = false;
 
+      this.ref = React.createRef();
+
       this.state = {
         isApiReady,
         isRemoved: false,
-        elementId: id || `hcaptcha-${nanoid()}`,
+        elementId: id,
         captchaId: ''
       }
     }
 
     componentDidMount () { //Once captcha is mounted intialize hCaptcha - hCaptcha
       const { languageOverride, reCaptchaCompat } = this.props;
-      const { isApiReady, elementId } = this.state;
+      const { isApiReady } = this.state;
 
 
-      if (!isApiReady) {  //Check if hCaptcha has already been loaded, if not create script tag and wait to render captcha elementID - hCaptcha
+      if (!isApiReady) {  //Check if hCaptcha has already been loaded, if not create script tag and wait to render captcha
 
         if (!captchaScriptCreated) {
             // Only create the script tag once, use a global variable to track
@@ -129,11 +114,11 @@ class HCaptcha extends React.Component {
     }
 
     renderCaptcha() {
-      const { isApiReady, elementId } = this.state;
+      const { isApiReady } = this.state;
       if (!isApiReady) return;
 
-      //Render hCaptcha widget and provide neccessary callbacks - hCaptcha
-      const captchaId = hcaptcha.render(document.getElementById(elementId),
+      //Render hCaptcha widget and provide necessary callbacks - hCaptcha
+      const captchaId = hcaptcha.render(this.ref.current,
         {
           ...this.props,
           "error-callback"  : this.handleError,
@@ -208,8 +193,9 @@ class HCaptcha extends React.Component {
     }
 
     render () {
+      // Keep elementId for backwards compatibility
       const { elementId } = this.state;
-      return <div id={elementId}></div>
+      return <div ref={this.ref} id={elementId}></div>
     }
   }
 

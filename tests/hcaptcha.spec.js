@@ -42,6 +42,27 @@ describe('hCaptcha', () => {
         expect(ReactDOM.findDOMNode(instance).nodeName).toBe("DIV");
     });
 
+    it('tests id setting for backwards compatibility', () => {
+        instance = ReactTestUtils.renderIntoDocument(
+            <HCaptcha
+                sitekey={TEST_PROPS.sitekey}
+                id="test-id-1"
+            />,
+        );
+        const node = ReactDOM.findDOMNode(instance);
+        expect(node.getAttribute("id")).toBe("test-id-1");
+    });
+
+    it('should not set id if no id prop is passed', () => {
+        instance = ReactTestUtils.renderIntoDocument(
+            <HCaptcha
+                sitekey={TEST_PROPS.sitekey}
+            />,
+        );
+        const node = ReactDOM.findDOMNode(instance);
+        expect(node.getAttribute("id")).toBe(null);
+    });
+
     it('has functions', () => {
         expect(typeof instance.execute).toBe('function');
         expect(typeof instance.resetCaptcha).toBe('function');

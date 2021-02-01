@@ -28,26 +28,7 @@ function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Re
 
 function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
 
-var React = require('react'); // Borrowed from https://github.com/ai/nanoid/blob/3.0.2/non-secure/index.js
-// This alphabet uses `A-Za-z0-9_-` symbols. A genetic algorithm helped
-// optimize the gzip compression for this alphabet.
-
-
-var urlAlphabet = 'ModuleSymbhasOwnPr-0123456789ABCDEFGHNRVfgctiUvz_KqYTJkLxpZXIjQW';
-
-var nanoid = function nanoid() {
-  var size = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 21;
-  var id = ''; // A compact alternative for `for (var i = 0; i < step; i++)`.
-
-  var i = size;
-
-  while (i--) {
-    // `| 0` is more compact and faster than `Math.floor()`.
-    id += urlAlphabet[Math.random() * 64 | 0];
-  }
-
-  return id;
-}; // Create script to init hCaptcha
+var React = require('react'); // Create script to init hCaptcha
 
 
 var onLoadListeners = [];
@@ -102,10 +83,11 @@ var HCaptcha = /*#__PURE__*/function (_React$Component) {
     _this.handleError = _this.handleError.bind(_assertThisInitialized(_this));
     var isApiReady = typeof hcaptcha !== 'undefined';
     if (!isApiReady) captchaScriptCreated = false;
+    _this.ref = React.createRef();
     _this.state = {
       isApiReady: isApiReady,
       isRemoved: false,
-      elementId: id || "hcaptcha-".concat(nanoid()),
+      elementId: id,
       captchaId: ''
     };
     return _this;
@@ -118,12 +100,10 @@ var HCaptcha = /*#__PURE__*/function (_React$Component) {
       var _this$props = this.props,
           languageOverride = _this$props.languageOverride,
           reCaptchaCompat = _this$props.reCaptchaCompat;
-      var _this$state = this.state,
-          isApiReady = _this$state.isApiReady,
-          elementId = _this$state.elementId;
+      var isApiReady = this.state.isApiReady;
 
       if (!isApiReady) {
-        //Check if hCaptcha has already been loaded, if not create script tag and wait to render captcha elementID - hCaptcha
+        //Check if hCaptcha has already been loaded, if not create script tag and wait to render captcha
         if (!captchaScriptCreated) {
           // Only create the script tag once, use a global variable to track
           captchaScriptCreated = true;
@@ -139,10 +119,10 @@ var HCaptcha = /*#__PURE__*/function (_React$Component) {
   }, {
     key: "componentWillUnmount",
     value: function componentWillUnmount() {
-      var _this$state2 = this.state,
-          isApiReady = _this$state2.isApiReady,
-          isRemoved = _this$state2.isRemoved,
-          captchaId = _this$state2.captchaId;
+      var _this$state = this.state,
+          isApiReady = _this$state.isApiReady,
+          isRemoved = _this$state.isRemoved,
+          captchaId = _this$state.captchaId;
       if (!isApiReady || isRemoved) return; // Reset any stored variables / timers when unmounting
 
       hcaptcha.reset(captchaId);
@@ -179,12 +159,10 @@ var HCaptcha = /*#__PURE__*/function (_React$Component) {
   }, {
     key: "renderCaptcha",
     value: function renderCaptcha() {
-      var _this$state3 = this.state,
-          isApiReady = _this$state3.isApiReady,
-          elementId = _this$state3.elementId;
-      if (!isApiReady) return; //Render hCaptcha widget and provide neccessary callbacks - hCaptcha
+      var isApiReady = this.state.isApiReady;
+      if (!isApiReady) return; //Render hCaptcha widget and provide necessary callbacks - hCaptcha
 
-      var captchaId = hcaptcha.render(document.getElementById(elementId), _objectSpread(_objectSpread({}, this.props), {}, {
+      var captchaId = hcaptcha.render(this.ref.current, _objectSpread(_objectSpread({}, this.props), {}, {
         "error-callback": this.handleError,
         "expired-callback": this.handleExpire,
         "callback": this.handleSubmit
@@ -197,10 +175,10 @@ var HCaptcha = /*#__PURE__*/function (_React$Component) {
   }, {
     key: "resetCaptcha",
     value: function resetCaptcha() {
-      var _this$state4 = this.state,
-          isApiReady = _this$state4.isApiReady,
-          isRemoved = _this$state4.isRemoved,
-          captchaId = _this$state4.captchaId;
+      var _this$state2 = this.state,
+          isApiReady = _this$state2.isApiReady,
+          isRemoved = _this$state2.isRemoved,
+          captchaId = _this$state2.captchaId;
       if (!isApiReady || isRemoved) return; // Reset captcha state, removes stored token and unticks checkbox
 
       hcaptcha.reset(captchaId);
@@ -208,10 +186,10 @@ var HCaptcha = /*#__PURE__*/function (_React$Component) {
   }, {
     key: "removeCaptcha",
     value: function removeCaptcha() {
-      var _this$state5 = this.state,
-          isApiReady = _this$state5.isApiReady,
-          isRemoved = _this$state5.isRemoved,
-          captchaId = _this$state5.captchaId;
+      var _this$state3 = this.state,
+          isApiReady = _this$state3.isApiReady,
+          isRemoved = _this$state3.isRemoved,
+          captchaId = _this$state3.captchaId;
       if (!isApiReady || isRemoved) return;
       this.setState({
         isRemoved: true
@@ -234,9 +212,9 @@ var HCaptcha = /*#__PURE__*/function (_React$Component) {
     key: "handleSubmit",
     value: function handleSubmit(event) {
       var onVerify = this.props.onVerify;
-      var _this$state6 = this.state,
-          isRemoved = _this$state6.isRemoved,
-          captchaId = _this$state6.captchaId;
+      var _this$state4 = this.state,
+          isRemoved = _this$state4.isRemoved,
+          captchaId = _this$state4.captchaId;
       if (typeof hcaptcha === 'undefined' || isRemoved) return;
       var token = hcaptcha.getResponse(captchaId); //Get response token from hCaptcha widget
 
@@ -248,10 +226,10 @@ var HCaptcha = /*#__PURE__*/function (_React$Component) {
     key: "handleExpire",
     value: function handleExpire() {
       var onExpire = this.props.onExpire;
-      var _this$state7 = this.state,
-          isApiReady = _this$state7.isApiReady,
-          isRemoved = _this$state7.isRemoved,
-          captchaId = _this$state7.captchaId;
+      var _this$state5 = this.state,
+          isApiReady = _this$state5.isApiReady,
+          isRemoved = _this$state5.isRemoved,
+          captchaId = _this$state5.captchaId;
       if (!isApiReady || isRemoved) return;
       hcaptcha.reset(captchaId); // If hCaptcha runs into error, reset captcha - hCaptcha
 
@@ -261,10 +239,10 @@ var HCaptcha = /*#__PURE__*/function (_React$Component) {
     key: "handleError",
     value: function handleError(event) {
       var onError = this.props.onError;
-      var _this$state8 = this.state,
-          isApiReady = _this$state8.isApiReady,
-          isRemoved = _this$state8.isRemoved,
-          captchaId = _this$state8.captchaId;
+      var _this$state6 = this.state,
+          isApiReady = _this$state6.isApiReady,
+          isRemoved = _this$state6.isRemoved,
+          captchaId = _this$state6.captchaId;
       if (!isApiReady || isRemoved) return;
       hcaptcha.reset(captchaId); // If hCaptcha runs into error, reset captcha - hCaptcha
 
@@ -273,18 +251,20 @@ var HCaptcha = /*#__PURE__*/function (_React$Component) {
   }, {
     key: "execute",
     value: function execute() {
-      var _this$state9 = this.state,
-          isApiReady = _this$state9.isApiReady,
-          isRemoved = _this$state9.isRemoved,
-          captchaId = _this$state9.captchaId;
+      var _this$state7 = this.state,
+          isApiReady = _this$state7.isApiReady,
+          isRemoved = _this$state7.isRemoved,
+          captchaId = _this$state7.captchaId;
       if (!isApiReady || isRemoved) return;
       hcaptcha.execute(captchaId);
     }
   }, {
     key: "render",
     value: function render() {
+      // Keep elementId for backwards compatibility
       var elementId = this.state.elementId;
       return /*#__PURE__*/React.createElement("div", {
+        ref: this.ref,
         id: elementId
       });
     }
