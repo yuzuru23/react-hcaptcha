@@ -34,6 +34,10 @@ class HCaptcha extends React.Component {
       super(props);
       const { id=null } = props;
 
+      if (id && console.warn) {
+          console.warn('id prop is deprecated as of 0.3.1. It will be removed in the future. Instead you can set the id on the <HCaptcha /> component itself.');
+      }
+
       // API Methods
       this.renderCaptcha = this.renderCaptcha.bind(this);
       this.resetCaptcha  = this.resetCaptcha.bind(this);
